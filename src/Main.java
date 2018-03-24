@@ -1,17 +1,17 @@
-import com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement;
-
 import java.sql.*;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] arg) {
         DBProject dbProject = new DBProject();
-        try {
-            dbProject.menu();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        while (true) {
+            try {
+                dbProject.menu();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -28,14 +28,15 @@ class DBProject {
 
         Scanner in = new Scanner(System.in);
         System.out.println("Gör ett val:\n" +
-                "1. Lägga till utbildning\n" +
-                "2. Lägga till kurs\n" +
-                "3. Lägga till lärare\n" +
-                "4. Lägga till elev\n" +
+                "1. Lägg till utbildning\n" +
+                "2. Lägg till kurs\n" +
+                "3. Lägg till anställd\n" +
+                "4. Lägg till elev\n" +
                 "5. Starta en kurs\n" +
-                "6. Sätta betyg\n" +
-                "7. Utvärdera en kurs (visar info om lärare, elever, kursmaterial, satta betyg, ort, utbildningsnamn, kursnamn)\n" +
-                "8. ta bort elev");
+                "6. Lägg till elev i klass\n" +
+                "7. Sätt betyg\n" +
+                "8. Utvärdera en kurs\n" +
+                "9. ta bort elev");
         switch (in.nextInt()) {
             case 1:
                 in = new Scanner(System.in);
@@ -45,9 +46,9 @@ class DBProject {
                         "VALUES(?, ?, ?)");
                 System.out.print("Utbildnings ID i formatet UTB + 3 siffror [UTBNNN] : ");
                 insertUtbildning.setString(1, in.nextLine());
-                System.out.print("Namn på utbildningen: ");
+                System.out.print("Ange namn på utbildningen: ");
                 insertUtbildning.setString(2, in.nextLine());
-                System.out.print("Utbildnings Ort: ");
+                System.out.print("Ange utbildnings Ort: ");
                 insertUtbildning.setString(3, in.nextLine());
                 insertUtbildning.executeUpdate();
 
@@ -60,18 +61,82 @@ class DBProject {
 //                updateDB("INSERT INTO Utbildning VALUES ('" + utbID + "','" + namn + "','" + ort + "')");
                 break;
             case 2:
+                in = new Scanner(System.in);
+
+                PreparedStatement insertKurs = con.prepareStatement("INSERT INTO Kurs" +
+                        "(KursID, Namn)" +
+                        "VALUES(?, ?)");
+                System.out.print("Ange kurskod (3 bokstäver) t.ex \"MaB\" : ");
+                insertKurs.setString(1, in.nextLine());
+                System.out.print("Ange namn på kursen: ");
+                insertKurs.setString(2, in.nextLine());
+                insertKurs.executeUpdate();
                 break;
             case 3:
+                in = new Scanner(System.in);
+
+                PreparedStatement insertAnstalld = con.prepareStatement("INSERT INTO Anställd" +
+                        "(AnstID,Namn,Mail,Adress,Ort,Befattning)" +
+                        "VALUES(?,?,?,?,?,?)");
+                System.out.print("Ange anställnings ID i formatet A+anställningsår+ordning t.ex [A1602] : ");
+                insertAnstalld.setString(1, in.nextLine());
+                System.out.print("Namn: ");
+                insertAnstalld.setString(2, in.nextLine());
+                System.out.print("Mail: ");
+                insertAnstalld.setString(3, in.nextLine());
+                System.out.print("Adress: ");
+                insertAnstalld.setString(4, in.nextLine());
+                System.out.print("Ort: ");
+                insertAnstalld.setString(5, in.nextLine());
+                System.out.print("Befattning: ");
+                insertAnstalld.setString(6, in.nextLine());
+                insertAnstalld.executeUpdate();
                 break;
             case 4:
+                in = new Scanner(System.in);
+
+                PreparedStatement insertElev = con.prepareStatement("INSERT INTO Elev" +
+                        "(ElevID,Namn,Mail,Adress,Ort)" +
+                        "VALUES(?,?,?,?,?)");
+                System.out.print("Ange elevID, 6 tecken, i formatet E+startår+ordning t.ex [E18112] : ");
+                insertElev.setString(1, in.nextLine());
+                System.out.print("Namn: ");
+                insertElev.setString(2, in.nextLine());
+                System.out.print("Mail: ");
+                insertElev.setString(3, in.nextLine());
+                System.out.print("Adress: ");
+                insertElev.setString(4, in.nextLine());
+                System.out.print("Ort: ");
+                insertElev.setString(5, in.nextLine());
+                insertElev.executeUpdate();
                 break;
             case 5:
+                /*TODO
+                Starta ett kurstillfälle: KursTillfälleID, KursID, ToM, FoM, Kursansvarig(anstID), UtbildningsID
+	            Bestäm kursmaterial: KurstillfälleID, BokID
+	            Koppla elever till kurstillfälle: KurstillfälleID, ElevID
+                */
+
                 break;
             case 6:
+                in = new Scanner(System.in);
+
+                PreparedStatement insertElevKlass = con.prepareStatement("INSERT INTO KlassLista" +
+                        "(KurstillfälleID, ElevID)" +
+                        "VALUES(?, ?)");
+                //TODO visa alla kurstillfälleID med namn och ort
+                System.out.print("Ange KurstillfälleID: ");
+                insertElevKlass.setString(1, in.nextLine());
+                System.out.print("Ange ElevID: ");
+                insertElevKlass.setString(2, in.nextLine());
+                insertElevKlass.executeUpdate();
                 break;
             case 7:
                 break;
             case 8:
+                /*
+                * visa info om lärare, elever, kursmaterial, satta betyg, ort, utbildningsnamn, kursnamn)
+                * */
                 break;
             case 9:
                 break;
